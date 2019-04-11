@@ -9,21 +9,24 @@
 set -ex
 
 if [ "$1" = "docker" ]; then
-    TEST_BRANCH=${TEST_BRANCH:-android-5.0.2_r1}
-    TEST_URL=${TEST_URL:-https://android.googlesource.com/platform/manifest}
+    TEST_BRANCH=${TEST_BRANCH:-bju2000-patch-1}
+    TEST_URL=${TEST_URL:-https://github.com/bju2000/android-1}
 
     cpus=$(grep ^processor /proc/cpuinfo | wc -l)
 
     repo init --depth 1 -u "$TEST_URL" -b "$TEST_BRANCH"
 
     # Use default sync '-j' value embedded in manifest file to be polite
-    repo sync
+    repo sync -c -j16 --force-sync --no-clone-bundle --no-tags --optimized-fetch --prune
 
-    prebuilts/misc/linux-x86/ccache/ccache -M 10G
+    #prebuilts/misc/linux-x86/ccache/ccache -M 10G
+
+device=$1
 
     source build/envsetup.sh
-    lunch aosp_arm-eng
-    make -j $cpus
+    lunch $device
+    time make clobber
+    time make -j $cpus
 else
     aosp_url="https://raw.githubusercontent.com/kylemanna/docker-aosp/master/utils/aosp"
     args="bash run.sh docker"
