@@ -21,10 +21,10 @@ if [ "$1" = "docker" ]; then
 
     #prebuilts/misc/linux-x86/ccache/ccache -M 10G
 
-device=$1
+#device=$1
 
     source build/envsetup.sh
-    lunch $device
+    lunch hammerhead
     time make clobber
     time make -j $cpus
 else
